@@ -58,25 +58,18 @@ This work has the following sections: Section II explains the functional archite
 
 \section{ARCHITECTURAL PROPOSAL}
 
+\begin{figure}[tb]
+\centerline{\includegraphics[width=9.2cm,angle=0]{ARCHITCTURE.png}}
+\caption{Architecture of the test.}
+\label{fig1}
+\end{figure}
+
 This paper uses the iFUSION architecture, which decouples the evolution of both network and service layers \cite{b2}. iFUSION includes two control layers: Software Defined Transport Network (SDTN) controller, with an E2E network view and SDN Controller (SDNc) for each technology IP, optical and microwave. The proposed model stands on the use of interfaces leveraging on the latest developments in IETF, ONF, and OpenConfig.
 The SDTN main function is to facilitate the multi-domain orchestration.
 When logical resources must be synchronized between domains, the SDTN is capable of decompose service request per domain, expand network specific information or allocate resorces. 
 The SDNc will directly interact with the SDTN using RESTCONF and with the Network devices using NETCONF. 
 
 \section{LAYER 3 VPN PROVISIONING}
-
-\begin{figure}[!h]
-\centerline{\includegraphics{WORKFLOW.png}}
-\caption{Example of a figure caption.}
-\label{fig1}
-\end{figure}
-
-
-\begin{figure}[!h]
-\centerline{\includegraphics{ARCHITECTURE.png}}
-\caption{Example of a figure caption.}
-\label{fig1}
-\end{figure}
 
 The Layer 3 Virtual Private Network (VPN) service defined in RFC 4364 provides a multipoint, routed service to the customer over an IP/MPLS core. 
 L3NM \cite{b3} is a Network Model defined in YANG. The L3NMmodel is exposed by network controllers to manage and control the VPN Service configuration. The model describes a VPN Service in the service provider network. It contains especific information to deploy the configuration on the network, such as NE-ID and Interfaces-ID and might include allocated resources such as the Route Targets, Route Distinguishers, VLANs and IP addressing.
@@ -91,12 +84,24 @@ In the proposed hierarchy, the service orchestration layer does not need to know
 
 \section{EXPERIMENTAL VALIDATION}
 
+\begin{figure}[htb]
+\centerline{\includegraphics[width=9.2cm,angle=0]{WORKFLOW.png}}
+\caption{Service request Workflow.}
+\label{fig2}
+\end{figure}
+
 The experimental set-up simulates an IP/MPLS network scenario, where the data plane consists of two interconnected routers acting as PE devices. Every router has two cards of 10x10G interfaces but only two access client-facing ports (1/1/c10/1 and 1/1/c11/2 in each router) can be used to connect customers. Each port has been configured to support Dot1Q ethernet encapsulation, so several services can be attached to the same physical port, using different VLAN-IDs. The control plane is formed by two pieces:
 \begin{itemize}
     \item An SDTN controller is developed by Telefonica. 
     \item A commercial IPSDNc connected to the routers
 \end{itemize}
 As the SDTN has an E2E view, all the services creation requests must be received by the SDTN, processed, expanded and forwarded using RESTCONF/YANG to the SDN controllers. The communication between the routers and the SDNc is based on NETCONF/YANG. 
+
+\begin{figure}[tb]
+\centerline{\includegraphics[width=9.2cm,angle=0]{TRACES.png}}
+\caption{Architecture of the test.}
+\label{fig1}
+\end{figure}
 
 The first goal to be achieved was to retrieve the UNI-Topology to determine the available interfaces on the network. One of the service attachment points (by node in the VPN) retrieved  in the UNI-topology must be selected as a service end-point. After that, an End-to-End L3VPN between the selected nodes must be established. So, the SDTN controller will provision the service using RESTCONF + IETF L3NM requests to the IP SDNc. Several scenarios where tested:
 \begin{itemize}
@@ -105,7 +110,8 @@ The first goal to be achieved was to retrieve the UNI-Topology to determine the 
     \item RD+RT+VLANs automatically assigned by the SDTN
 \end{itemize}
 
-The full E2E L3VPN service establishment process is shown in the \ref{fig1} First, the figure shows the RESTCONF request of the L3VPN service creation, how this is received by SDTN Controller, passed to SDNc and accepted by both (step 1). Once the L3VPN service has been created, it is needed to create the desired IE Profiles and VPN Nodes for the service. Steps 2 and 3 of Fig. 1 show the traces of the creation process of one IE Profile and one VPN Node, respectively, for the L3VPN service in SDNc and SDTN Controller.
+The full E2E L3VPN service establishment workflow is shown in the \ref{fig2} First, the figure shows the RESTCONF request of the L3VPN service creation, how this is received by SDTN Controller, passed to SDNc and accepted by both (step 1). Once the L3VPN service has been created, it is needed to create the desired IE Profiles and VPN Nodes for the service. 
+Steps 2 and 3 of \ref{fig3} show the traces of the creation process of one IE Profile and one VPN Node, respectively, for the L3VPN service in SDNc and SDTN Controller.
 
 \section{CONCLUSIONS}
 
