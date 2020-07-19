@@ -62,10 +62,15 @@ This paper has the following sections: Section II explains the functional archit
 
 IP networks usually follow a hierarchical model, mixing equipment from different vendors. The IP routers are interoperable at data and control plane level (e.g., routing protocols such as IS-IS, OSPF, or BGP). Due to scalability reasons, the IP networks have in IP subdomains to confine the routing and control protocols on their particular domains.
 
+\begin{figure}
+	\centering
+		\includegraphics[scale=0.8]{ifusion_multidomain_2.png}
+	\caption{IP SDN Domain Controller deployment}
+	\label{FIG:1}
+\end{figure}
 
 
-
-\ref{} shows the role of IP SDN Controller (IPSDNc) in a typical service provider network. The solution focuses on a single, multi-vendor controller responsible for configuring the IP network elements. The Northbound Interface (NBI) of the controller is based on standard models defined in YANG. To access it, the protocol supported is RESTCONF with JSON encoding.
+\ref{FIG:1} shows the role of IP SDN Controller (IPSDNc) in a typical service provider network. The solution focuses on a single, multi-vendor controller responsible for configuring the IP network elements. The Northbound Interface (NBI) of the controller is based on standard models defined in YANG. To access it, the protocol supported is RESTCONF with JSON encoding.
 
 The NBI allows the programmatic configuration of all elements participating in a service. Thus, the IPSDNc must handle the service creation requests delivered by the service orchestration layer and translate it to device-specific configuration. For this task, the target Southbound Interface (SBI) of the IPSDNc is to make a vendor-agnostic device configuration using the NETCONF protocol and a common data model. The set of device configuration data models for the IP segment is still under development, but a lot of YANG definitions have been made in Openconfig or IETF until now. 
 
@@ -73,7 +78,14 @@ The NBI allows the programmatic configuration of all elements participating in a
 
 The Layer 3 Virtual Private Network (VPN) service defined in RFC 4364 \cite{} provides a multipoint, routed service to the customer over an IP/MPLS core. The L3VPNs are widely used to deploy 4G/5G, fixed, and enterprise services, principally because, not only many traffic discrimination policies can be applied to transport but also because of several stitching methodologies can be applied to combine access and transport services. 
 
-To improve the L3VPN lifecycle management in the service provider network, as depicted in \ref{}. Two phases need to be analyzed:
+\begin{figure}
+	\centering
+		\includegraphics[scale=0.8]{figure2png.png}
+	\caption{Design Phase and implementation phases of a MPLS VPN Service}
+	\label{FIG:2}
+\end{figure}
+
+To improve the L3VPN lifecycle management in the service provider network, as depicted in \ref{FIG:2}. Two phases need to be analyzed:
 \begin{itemize}
     \item \textbr{Design phase}: Some service models have been defined and standardized until now. These works include generic purpose modeling languages like TOSCA or YANG \cite{}.
     \item \textbr{Operation phase}: Instantiate the Service requests on the devices and operate them in the live network. It implies the ability to reuse the same service models against devices from different vendors.
@@ -125,6 +137,13 @@ We can now summarize then what should we require from a NETCONF/YANG southbound 
     \item The controller should support by default the “all at once” single step. Conversely, the controller should support devices that require multiple commits via a different behavior.
 \end{enumerate}
 
+\begin{figure}
+	\centering
+		\includegraphics[scale=0.8]{figure3.png}
+	\caption{Schema mount in RFC8528 used to map two implementations of openconfig-interfaces as SBI}
+	\label{FIG:3}
+\end{figure}
+
 One of the main technologies that may help vendors to address these concerns is the use of the YANG Schema-Mount standard (RFC8528). Thanks to this technology, different versions of the same namespace could be added to different nodes in the controller configuration and state trees. This means that if we create a list of implementation, we could “mount” as many variants as desired. The idea of using the YANG Schema-Mount was already introduced at the Broadband Forum (BBF) TR-413 specification for the Broadband Access Abstraction (BAA) layer. In that document, the BBF also suggest the use of the same technology to solve the implementation of multiple protocols southbound (CLI, SNMP, REST) and mapping them to a common YANG representation depicted in \ref{}.
 \section{Experimental Validation}
 The network set-up and the test done are explained in this section.
@@ -160,9 +179,23 @@ To evaluate the YANG model defined for the L3VPN and how its design can impact t
     \end{equation}
 \end{enumerate}
 
-Based on this, two workflows to request the VPN service to the network controller were defined. The workflows differ on N the number of calls done to create the service but globally the total number of parameters is identical, as detailed in \ref{}.
+\begin{figure}
+	\centering
+		\includegraphics[width=\linewidth]{figure4.png}
+	\caption{Calls and numbers of parameters used in each test}
+	\label{FIG:4}
+\end{figure}
+
+Based on this, two workflows to request the VPN service to the network controller were defined. The workflows differ on N the number of calls done to create the service but globally the total number of parameters is identical, as detailed in \ref{FIG:4}.
 
 Each workflow follows the next steps:  The creation request is sent to the IPSDNc using RESTCONF/YANG. IPSDNc computes the call and, if the request is valid, the controller returns with “201 CREATED”. The instantiation of the service on the device is done only when the call related to the VPN-Network-Access is processed. All the other operations are executed at the controller level, but not generate changes on the network. 
+
+\begin{figure}
+	\centering
+		\includegraphics[width=\linewidth]{figure6.png}
+	\caption{Performance results obtained during the testing}
+	\label{FIG:5}
+\end{figure}
 
 \section{Results}
 The total time consumed by the IPSDN controller to create and delete a VPN service form the network was measured. The mean (m) values and the standard deviation is computed in the for the 100 experiments. The main difference was found during the creation process. During creation, each additional call introduces a delay of $0,82$ seconds per additional call. This number seems low, however a change in the model structure, for example, avoid the cross-references between the containers of sites and VPN services, can allow a single call creation process. This potentially will reduce the creation time, a bit more. This kind of behavior can be treated as a design rule to make the model implementation efficient. 
