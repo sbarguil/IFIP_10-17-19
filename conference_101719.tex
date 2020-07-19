@@ -7,115 +7,171 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{siunitx}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Mapping Topologies and Services for L3VPN Automatic Provisioning}
+\title{Experimental validation of L3 VPN Network Model for improving VPN service design and provisioning}
 
 \author{\IEEEauthorblockN{Samier Barguil}
 \IEEEauthorblockA{\textit{Universidad Autonoma de Madrid}\\
 Madrid, Spain\\
 samier.barguil@estudiante.uam.es}\\
 \and
-\IEEEauthorblockN{Guillermo Pajares,Oscar Gonzalez de Dios \\
+\IEEEauthorblockN{Oscar Gonzalez de Dios \\
 and Victor Lopez Alvarez}
 \IEEEauthorblockA{\textit{Telefonica I+D}\\
 Madrid, Spain}\\
 \and
+\IEEEauthorblockN{Roque Gagliano and Ignacio Carretero}
+\IEEEauthorblockA{\textit{Cisco Systems}\\
+Pully, Switzerland and Madrid, Spain}\\
+\and
 \IEEEauthorblockN{Ricard Vilalta}
-\IEEEauthorblockA{\textit{Centre Tecnologic \\
-de Telecomunicacions de Catalunya \\
-(CTTC/CERCA) \\
-Casteldefels, Spain}}\\
+\IEEEauthorblockA{\textit{Centre Tecnologic de Telecomunicacions de Catalunya (CTTC/CERCA)} \\
+Casteldefels, Spain}\\
 }
 \maketitle
 \begin{abstract}
-Current approaches to automatically configure transport services have several problems.  In the first place, there is a gap of standard interfaces between the Operational Support Systems (OSS), and Network Management Systems (NMSs); the available interfaces are typically proprietary, which limits network programmability as the effort is put on integration. 
-Second, the orchestration across different NMSs (e.g., IP/MPLS, microwave and Optical Transport) is complicated to achieve, because each NMS is a highly specialized element for the vendor. 
-There are lacks in interoperability with other vendors’ elements, and, especially, on the NMS to NMS communication. 
-Finally, there are missing aspects in the standardization of the interface for upper-layer applications or services. The set of previous problems prevent deploying services in a rapid and automated fashion in the telecom environment. 
+Current approaches to automate the design and configuration of transport services face several challenges. Firstly, there is a lack of open interfaces between the Operational Support Systems (OSS) and the network layer. The commercially available interfaces to Network Management Systems (NMSs) or directly to the devices are typically proprietary and with limited programmability. Secondly, for the case of IP/MPLS networks, the definition of how a service is built is particular to each operator.
 
-Network operators need a carrier SDN solution that can be deployed in brownfield scenarios. In order to solve this, this work presents the mapping of network topologies and services to enable automatic L3VPN provisioning with standard interfaces. The paper demonstrates that such automation is possible with proposed draft standards from IETF and validates and verifies its implementation.
+To solve this situation, this work presents an approach based on a hybrid SDN in which the definition of a VPN service is made with a modeling language and is not limited to a particular operator design nor a particular set of vendor devices. The IP/MPLS network topology and the VPN services are programmable via standard APIs with RESTCONF/YANG from an SDN Controller. This facilitates the operator on the one hand designing a new VPN service and its full automation.  This work demonstrates, for the first time, that such automation is possible with proposed draft standards from IETF and validates its implementation, comparing the time consumed in the controller to process to different workflows from the same model.
 \end{abstract}
 
 \begin{IEEEkeywords}
-L3VPN, Topology, Service, mapping, provisioning
+L3VPN, IP Networks, SDN, Service Provisioning
 \end{IEEEkeywords}
 
 \section{Introduction}
-Software-Defined Networking (SDN) originally \cite{b1} came with the concept of the decoupling of control and forwarding planes in the network elements.
-A centralized controller with the complete network view does the control plane functions. 
-It runs intelligent algorithms and applications (either as part of the controller or on top of it) and instructs the nodes accordingly. 
-This original view, when ported to real carrier networks \cite{b2}, has been evolved towards an architecture where the centralized control assists the network elements on the forwarding tasks, providing a single and unified control environment for network operations. 
-The network elements retain control capabilities but leveraging on the centralized controller for end-to-end and cross-layer actions through programmable interfaces. 
+Network operators are in continuous evolution to satisfy the changing and variable service demands of the end-users. Such evolution affects not only to the service offering but also to the network supporting the delivery of such services. A crucial part of this network is the transport infrastructure. Transport networks are responsible for forwarding aggregated traffic demands from end-users consuming different services across cities, regions, or continents. Transport network architecture was conceived for static scenarios, where were the traffic patterns usually follow the preconceived flow. This assumption allows configuring the network as a slow process since there was no need for the operator to reconfigure the deployed resources dynamically.
 
-In this work, we present the automation of L3VPN services in a service provider environment. 
-The integration of a hierarchical controller with a commercial SDN Domain controller using RESTCONF NBI interfaces is done.
-Also, the work implements two service models L3NM \cite{b3} and UNI-Topology \cite{b4} that are exposed between the controllers. 
+Software-Defined Networking (SDN) originally \cite{} came with the concept of the decoupling of control and forwarding planes in the network elements. A centralized controller with the complete network view does the control plane functions. It runs intelligent algorithms and applications (either as part of the controller or on top of it) and instructs the nodes accordingly. This original view, when ported to real carrier networks [2], has been evolved slightly towards an architecture where the centralized control assists the network elements on the forwarding tasks. This hybrid SDN approach provides a single and unified control environment for network operations and at the same time, optimizes the usage of network assets. The network elements yet retain control capabilities (in some cases, alleviating some signaling tasks), but leveraging on the centralized controller for end-to-end and cross-layer actions through programmable interfaces. 
 
-This work has the following sections: Section II explains the functional architecture for a carrier-grade SDN solution. Section III explains the Network Service Models used for the L3VPN definition. Section IV explains the topology models, and Section V explains the experimental validation and the results obtained. Finally, Section VI concludes this paper.
+The use of the SDN principles is aimed to simplify the network operation and to allow a fast reaction and adaptability to network changes motivated by traffic variability or simply because of service configuration. Besides network element control functions, SDN is also considered as an entity to provide support for management functions, such as a collection of real-time information that could permit the automatic configuration creation and activation in network elements, as triggered by the Operational Support Systems (OSS). Day to day network operation for a service provider involves a set of complex and technologically specific tasks. Some of these include periodic operations as capacity planning, traffic forecast analysis, network convergence optimization, new devices installation, or routine tasks like troubleshooting, patching, support in maintenance windows, or service provisioning. Commonly, the first set of tasks requires a high specialization and in-depth technological knowledge. However, the second set is mainly repetitive. 
+
+Since years ago, the usage of scripts to automate network tasks has become common. The usage of those scripts combined with some automation frameworks such as Ansible \cite{} or libraries like Expect \cite{} or Paramiko \cite{} are the higest level of automation found in service providers. In paralel some DevOps teams have been created to reduce the volume of manual task. However, some studies have revealed that even if the tools used between Service Providers are the same and the set of services configured are the same (Virtual Leased Lines (VLL), L2VPNs and L3VPNs), there is not a common way to do it. In that sense, due to the high level of customization, automation has implementations not easy to replicate between companies or even teams in the same company. To solve this problem, several YANG models have been released to support the service provisioning based on NETCONF/RESTCONF \cite{} interfaces and YANG \cite{} abstract models. 
+
+In this paper, we present the automation of L3VPN services in a service provider environment. With this purpose, a commercial SDN domain controller using RESTCONF NBI interfaces is tested. The controller implements a YANG network model named L3NM. This work validates two ways to use the model measuring the time consumed to create the service on real devices. 
+
+In this paper, we present the automation of MPLS L3 VPN services in a carrier ecosystem. A commercial SDN domain controller using RESTCONF NBI interfaces is tested. The controller implements a YANG network model named L3NM.  As the main result of this work, two ways to request the service creation to the controller, and after deploying it in the network are compared.
+
+This paper has the following sections: Section II explains the functional architecture for an IP SDN solution. Section III explains the Network Service Models used for the L3VPN definition. Section IV  explains the experimental validation and the results obtained. Finally, Section V concludes this paper. 
 
 \section{ARCHITECTURAL PROPOSAL}
 
-\begin{figure}[tb]
-\centerline{\includegraphics[width=9.2cm,angle=0]{ARCHITCTURE.png}}
-\caption{Architecture of the test.}
-\label{fig1}
-\end{figure}
+IP networks usually follow a hierarchical model, mixing equipment from different vendors. The IP routers are interoperable at data and control plane level (e.g., routing protocols such as IS-IS, OSPF, or BGP). Due to scalability reasons, the IP networks have in IP subdomains to confine the routing and control protocols on their particular domains.
 
-This paper uses the iFUSION architecture, which decouples the evolution of both network and service layers \cite{b2}. iFUSION includes two control layers: Software Defined Transport Network (SDTN) controller, with an E2E network view and SDN Controller (SDNc) for each technology IP, optical and microwave. The proposed model stands on the use of interfaces leveraging on the latest developments in IETF, ONF, and OpenConfig.
-The SDTN main function is to facilitate the multi-domain orchestration.
-When logical resources must be synchronized between domains, the SDTN is capable of decompose service request per domain, expand network specific information or allocate resorces. 
-The SDNc will directly interact with the SDTN using RESTCONF and with the Network devices using NETCONF. 
+
+
+
+\ref{} shows the role of IP SDN Controller (IPSDNc) in a typical service provider network. The solution focuses on a single, multi-vendor controller responsible for configuring the IP network elements. The Northbound Interface (NBI) of the controller is based on standard models defined in YANG. To access it, the protocol supported is RESTCONF with JSON encoding.
+
+The NBI allows the programmatic configuration of all elements participating in a service. Thus, the IPSDNc must handle the service creation requests delivered by the service orchestration layer and translate it to device-specific configuration. For this task, the target Southbound Interface (SBI) of the IPSDNc is to make a vendor-agnostic device configuration using the NETCONF protocol and a common data model. The set of device configuration data models for the IP segment is still under development, but a lot of YANG definitions have been made in Openconfig or IETF until now. 
 
 \section{LAYER 3 VPN PROVISIONING}
 
-The Layer 3 Virtual Private Network (VPN) service defined in RFC 4364 provides a multipoint, routed service to the customer over an IP/MPLS core. 
-L3NM \cite{b3} is a Network Model defined in YANG. The L3NMmodel is exposed by network controllers to manage and control the VPN Service configuration. The model describes a VPN Service in the service provider network. It contains especific information to deploy the configuration on the network, such as NE-ID and Interfaces-ID and might include allocated resources such as the Route Targets, Route Distinguishers, VLANs and IP addressing.
+The Layer 3 Virtual Private Network (VPN) service defined in RFC 4364 \cite{} provides a multipoint, routed service to the customer over an IP/MPLS core. The L3VPNs are widely used to deploy 4G/5G, fixed, and enterprise services, principally because, not only many traffic discrimination policies can be applied to transport but also because of several stitching methodologies can be applied to combine access and transport services. 
 
-The L3NM data model can be used to facilitate communication between the service orchestrator and the SDTN network controller. Also, the SDTN network controller can further include or expand specific information in the  request (i.e. transport LSP binding, Router Targets assignation, routing profiles or encryption). 
-
-\section{TOPOLOGY MODEL}
-
-The proposed control architecture relies on providing different levels of abstraction for each control layer. Therefore, the needs in terms of topology and knowledge of the service provider network differ among components.
-
-In the proposed hierarchy, the service orchestration layer does not need to know about the internals of the network. The authors have proposed a UNI topology model in \cite{b4}. The SDTN controller exposes the set of nodes. L3 VPN services can be requested adding as attachment points the nodes. For that aim, the UNI topology builds the network data model defined in the "ietf-network" module, augmenting the nodes with service-attachment points.
-
-\section{EXPERIMENTAL VALIDATION}
-
-\begin{figure}[htb]
-\centerline{\includegraphics[width=9.2cm,angle=0]{WORKFLOW.png}}
-\caption{Service request Workflow.}
-\label{fig2}
-\end{figure}
-
-The experimental set-up simulates an IP/MPLS network scenario, where the data plane consists of two interconnected routers acting as PE devices. Every router has two cards of 10x10G interfaces but only two access client-facing ports (1/1/c10/1 and 1/1/c11/2 in each router) can be used to connect customers. Each port has been configured to support Dot1Q ethernet encapsulation, so several services can be attached to the same physical port, using different VLAN-IDs. The control plane is formed by two pieces:
+To improve the L3VPN lifecycle management in the service provider network, as depicted in \ref{}. Two phases need to be analyzed:
 \begin{itemize}
-    \item An SDTN controller is developed by Telefonica. 
-    \item A commercial IPSDNc connected to the routers
-\end{itemize}
-As the SDTN has an E2E view, all the services creation requests must be received by the SDTN, processed, expanded and forwarded using RESTCONF/YANG to the SDN controllers. The communication between the routers and the SDNc is based on NETCONF/YANG. 
-
-\begin{figure}[tb]
-\centerline{\includegraphics[width=9.2cm,angle=0]{TRACES.png}}
-\caption{Architecture of the test.}
-\label{fig1}
-\end{figure}
-
-The first goal to be achieved was to retrieve the UNI-Topology to determine the available interfaces on the network. One of the service attachment points (by node in the VPN) retrieved  in the UNI-topology must be selected as a service end-point. After that, an End-to-End L3VPN between the selected nodes must be established. So, the SDTN controller will provision the service using RESTCONF + IETF L3NM requests to the IP SDNc. Several scenarios where tested:
-\begin{itemize}
-    \item All the network parameter defined by the user . 
-    \itme RD+RT automatically assigned by the SDTN. 
-    \item RD+RT+VLANs automatically assigned by the SDTN
+    \item \textbr{Design phase}: Some service models have been defined and standardized until now. These works include generic purpose modeling languages like TOSCA or YANG \cite{}.
+    \item \textbr{Operation phase}: Instantiate the Service requests on the devices and operate them in the live network. It implies the ability to reuse the same service models against devices from different vendors.
 \end{itemize}
 
-The full E2E L3VPN service establishment workflow is shown in the \ref{fig2} First, the figure shows the RESTCONF request of the L3VPN service creation, how this is received by SDTN Controller, passed to SDNc and accepted by both (step 1). Once the L3VPN service has been created, it is needed to create the desired IE Profiles and VPN Nodes for the service. 
-Steps 2 and 3 of \ref{fig3} show the traces of the creation process of one IE Profile and one VPN Node, respectively, for the L3VPN service in SDNc and SDTN Controller.
+These two phases can be executed in different timeframes. However, the set of requirements and parameters defined in the design limits the degree of automation provided during the implementation phase. 
+
+\subsection{Desing Phase: Layer 3 VPN Network API}
+
+L3NM \cite{} is a YANG data model to manage and control the VPN Service configuration based on the service provider requirements:
+\begin{itemize}
+    \item Create a VPN Service
+    \item Provision VRF on the PE
+    \item  Attach the interface to the PE
+\end{itemize}
+
+
+The L3NM model is Network Centric and it is focused on the service provider internal network parameters. By definition, the data model can be used to facilitate communication between the service orchestrator and the Network. The L3NM model does not keep any of the commercial customer parameters which belong to the OSS/BSS layer.
+
+\subsection{Operation phase: SBI Models Support}
+
+To instantiate the services on the devices notably YANG data models are available from standard bodies such as IETF, Broadband Forum, 3GPP, MEF and others. Additionally, a number of interest groups have been formed in recent years to create common data models for a specific group of interest. This is the case of OpenConfig which started by addressing the needs of Cloud Service Providers but is now expanding to network service providers and beyond. 
+
+As in any standard, data models will not address all the capabilities of any given devices. Therefore, device vendors are implementing their own (many times called native) data models that do cover all the capabilities for a given device type and operating system version.
+
+The typical way these overlaps of different YANG models are implementing is by a native implementation of NETCONF with direct or indirect (for example via the CLI API) access to the configuration database. Consequently, there are several nuances that operators need to be aware when planning which southbound data models to select:
+\begin{itemize}
+    \item Typically, only the native data models provide full access to all the device capabilities. This is especially true for some innovative or recent features.
+    \item There will be overlaps where a single configuration object (let’s say interface configuration) can be accessible via different modules. 
+    \item As the semantic of the different modules are not guaranteed to play well together, a clean cut between modules for a “mix scenario” is not given.
+\end{itemize}
+
+For those use cases where we have defined a target southbound data model, we also need to consider the lifecycle management of these modules, in special as:
+\begin{itemize}
+
+\item Device vendors will deviate between themselves on what and how they implement standard data models. These deviations are supported by the YANG specifications but in essences means that for a controller, two southbound standard data models would not be equal. 
+
+\item Device vendors will deviate on how they implement the different data models (even native) across their platforms and operating systems versions. Different platforms and operating system versions have different hardware and software capabilities, and therefore cannot expose the same APIs.
+
+\item YANG data modules evolve into new releases, these new releases may or may not follow the RFC6020 and RFC7950 rules for module upgrade. This means that the same namespace may have different meanings depending to which device you are talking to, which violates one of the main principles for YANG (RFC 7950 section 5.3).
+\end{itemize}
+
+The NETCONF/YANG standards do not mandate any specific “workflow”, i.e. if the target configuration should be executed as “all at once” or in a specific sequence. Moreover, dependencies between nodes in a YANG models are not annotated via any standard capability. This means that two standard compliant vendors may require different number of total commits for the same target configuration.
+
+We can now summarize then what should we require from a NETCONF/YANG southbound implementation in a network controller (besides supporting the mandatory standard documents) to make it functional in current real deployment scenarios:
+\begin{enumerate}
+    \item The controller should be able to support southbound devices that provide their own mix of standard and non-standard device data models, where the operator should be free to choose what combination it desires for every device group.
+    \item The controller should support multiple copies for the same namespace to allow different implementations across device types and vendors.
+    \item The controller should support by default the “all at once” single step. Conversely, the controller should support devices that require multiple commits via a different behavior.
+\end{enumerate}
+
+One of the main technologies that may help vendors to address these concerns is the use of the YANG Schema-Mount standard (RFC8528). Thanks to this technology, different versions of the same namespace could be added to different nodes in the controller configuration and state trees. This means that if we create a list of implementation, we could “mount” as many variants as desired. The idea of using the YANG Schema-Mount was already introduced at the Broadband Forum (BBF) TR-413 specification for the Broadband Access Abstraction (BAA) layer. In that document, the BBF also suggest the use of the same technology to solve the implementation of multiple protocols southbound (CLI, SNMP, REST) and mapping them to a common YANG representation depicted in \ref{}.
+\section{Experimental Validation}
+The network set-up and the test done are explained in this section.
+
+\subsection{Network Set-up}
+For our experiments, we have chosen the OpenConfig data models for Cisco IOS-XR and the Cisco Network Services Orchestrator (NSO) as the IP Controller. The Cisco NSO controller implements the YANG Schema-Mount standard (RFC8528) southbound and the L3NM as the service model in the NBI.
+
+\subsection{L3VPN Provisioning Workflow}
+
+The L3NM uses the YANG Modeling Language to technologically describe an L3VPN service. Thus, two main containers were defined, one for sites and one for the VPN-services. Each of these containers includes a list to create a set of sites and services, respectively. Each item (site or service) is uniquely identified in the list by their id, as follows:
+
+module: ietf-l3vpn-ntw
++--rw l3vpn-ntw
+  +--rw sites
+   +--rw site* [id]
+    +--rw site-network-accesses
+       +--rw site network-access* [id]
+   +--rw vpn-services
+       +--rw vpn-service* [vpn-id]
++--rw vpn-nodes
+    +--rw vpn-node* [ne-id]
+
+The segmentation between site and services in the design allows the re-utilization of sites between several services and introduces several degrees of flexibility to request the service creation. One of those is the possibility to make creation requests during different timeframes. For example, an initial time can be used to provision the sites and make it available for the controller, and a second one to create the service itself.
+
+\subsection{Experimentations}
+To evaluate the YANG model defined for the L3VPN and how its design can impact the service instantiation, the following tests were done:
+\begin{enumerate}
+    \item Define the minimum set of calls to request the service: Based on the model structure, the minimum number of calls required to complete the VPN onboarding process is three (3), due to the existing cross-references between sites and VPN-service.
+    \item Compare the minimum set of calls against the number of calls suggested by the model creators: According to the model specification five (5) request is the desired number of requests. 
+    \item Create a hundred (100) services using both methods and capture the time consumed by the controller to process each service request, measured as:
+    \begin{equation}
+         \si{\textrm{Net time}= \textrm{Creation} + \textrm{Deletion}\qquad \second}
+    \end{equation}
+\end{enumerate}
+
+Based on this, two workflows to request the VPN service to the network controller were defined. The workflows differ on N the number of calls done to create the service but globally the total number of parameters is identical, as detailed in \ref{}.
+
+Each workflow follows the next steps:  The creation request is sent to the IPSDNc using RESTCONF/YANG. IPSDNc computes the call and, if the request is valid, the controller returns with “201 CREATED”. The instantiation of the service on the device is done only when the call related to the VPN-Network-Access is processed. All the other operations are executed at the controller level, but not generate changes on the network. 
+
+\section{Results}
+The total time consumed by the IPSDN controller to create and delete a VPN service form the network was measured. The mean (m) values and the standard deviation is computed in the for the 100 experiments. The main difference was found during the creation process. During creation, each additional call introduces a delay of $0,82$ seconds per additional call. This number seems low, however a change in the model structure, for example, avoid the cross-references between the containers of sites and VPN services, can allow a single call creation process. This potentially will reduce the creation time, a bit more. This kind of behavior can be treated as a design rule to make the model implementation efficient. 
 
 \section{CONCLUSIONS}
 
-This work demonstrates for the first time two key aspects for network operators in practical scenarios: the mapping between topologies and L3 services, and,  the provisioning of L3 services with L3SM and L3NM interfaces. To do so, this work  implements for the first time L3NM and UNI topology IETF contributions. Finally, the work demonstrates that such automation with current standards and validates the implementation against a commercial SDN controller
+Telecommunication providers are forced to continuously evolve their networks to provide a better service for their customers. Thus, Network automation initiatives are highly necessary.  The implementation of these initiatives requires their adaptability and support of brownfield scenarios in operating networks. This support must include not only the configuration of the devices and all the possible services provisioned in the day-to-day operations across the service provider networks. 
+
+Firstly, this article provides an overview of the latest state-of-the-art standardization efforts of the L3 VPN life cycle management. Secondly, the work implements for the first the very first time the L3NM. Two workflows were used to request the service using the same network model. The time consumed using each workflow to implement the service on the device were measured and compared. The work demonstrates that YANG design rules can directly affect the time consumed to create services and explains how device models implementations can limit the deployment of common interfaces
 
 \section*{Acknowledgment}
 This work was supported partially by the European Commission H2020-ICT-2016-2 METRO-HAUL project (G. A. 761727) and Spanish AURORAS (RTI2018-099178).
