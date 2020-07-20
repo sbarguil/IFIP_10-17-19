@@ -46,11 +46,11 @@ L3VPN, IP Networks, SDN, Service Provisioning
 \section{Introduction}
 Network operators are in continuous evolution to satisfy the changing and variable service demands of the end-users. Such evolution affects not only to the service offering but also to the network supporting the delivery of such services. A crucial part of this network is the transport infrastructure. Transport networks are responsible for forwarding aggregated traffic demands from end-users consuming different services across cities, regions, or continents. Transport network architecture was conceived for static scenarios, where were the traffic patterns usually follow the preconceived flow. This assumption allows configuring the network as a slow process since there was no need for the operator to reconfigure the deployed resources dynamically.
 
-Software-Defined Networking (SDN) originally \cite{} came with the concept of the decoupling of control and forwarding planes in the network elements. A centralized controller with the complete network view does the control plane functions. It runs intelligent algorithms and applications (either as part of the controller or on top of it) and instructs the nodes accordingly. This original view, when ported to real carrier networks [2], has been evolved slightly towards an architecture where the centralized control assists the network elements on the forwarding tasks. This hybrid SDN approach provides a single and unified control environment for network operations and at the same time, optimizes the usage of network assets. The network elements yet retain control capabilities (in some cases, alleviating some signaling tasks), but leveraging on the centralized controller for end-to-end and cross-layer actions through programmable interfaces. 
+Software-Defined Networking (SDN) originally \cite{brief2014openflow,gude2008nox,tavakoli2009applying} came with the concept of the decoupling of control and forwarding planes in the network elements. A centralized controller with the complete network view does the control plane functions. It runs intelligent algorithms and applications (either as part of the controller or on top of it) and instructs the nodes accordingly. This original view, when ported to real carrier networks \cite{bemby2015vino}, has been evolved slightly towards an architecture where the centralized control assists the network elements on the forwarding tasks. This hybrid SDN approach provides a single and unified control environment for network operations and at the same time, optimizes the usage of network assets. The network elements yet retain control capabilities (in some cases, alleviating some signaling tasks), but leveraging on the centralized controller for end-to-end and cross-layer actions through programmable interfaces. 
 
 The use of the SDN principles is aimed to simplify the network operation and to allow a fast reaction and adaptability to network changes motivated by traffic variability or simply because of service configuration. Besides network element control functions, SDN is also considered as an entity to provide support for management functions, such as a collection of real-time information that could permit the automatic configuration creation and activation in network elements, as triggered by the Operational Support Systems (OSS). Day to day network operation for a service provider involves a set of complex and technologically specific tasks. Some of these include periodic operations as capacity planning, traffic forecast analysis, network convergence optimization, new devices installation, or routine tasks like troubleshooting, patching, support in maintenance windows, or service provisioning. Commonly, the first set of tasks requires a high specialization and in-depth technological knowledge. However, the second set is mainly repetitive. 
 
-Since years ago, the usage of scripts to automate network tasks has become common. The usage of those scripts combined with some automation frameworks such as Ansible \cite{} or libraries like Expect \cite{} or Paramiko \cite{} are the higest level of automation found in service providers. In paralel some DevOps teams have been created to reduce the volume of manual task. However, some studies have revealed that even if the tools used between Service Providers are the same and the set of services configured are the same (Virtual Leased Lines (VLL), L2VPNs and L3VPNs), there is not a common way to do it. In that sense, due to the high level of customization, automation has implementations not easy to replicate between companies or even teams in the same company. To solve this problem, several YANG models have been released to support the service provisioning based on NETCONF/RESTCONF \cite{} interfaces and YANG \cite{} abstract models. 
+Since years ago, the usage of scripts to automate network tasks has become common. The usage of those scripts combined with some automation frameworks such as Ansible \cite{libes1995exploring} or libraries like Expect \cite{hochstein2017ansible} or Paramiko \cite{zadka2019paramiko} are the higest level of automation found in service providers. In paralel some DevOps teams have been created to reduce the volume of manual task. However, some studies have revealed that even if the tools used between Service Providers are the same and the set of services configured are the same (Virtual Leased Lines (VLL), L2VPNs and L3VPNs), there is not a common way to do it. In that sense, due to the high level of customization, automation has implementations not easy to replicate between companies or even teams in the same company. To solve this problem, several YANG models have been released to support the service provisioning based on NETCONF/RESTCONF \cite{enns2011network,bierman2017RESTCONF} interfaces and YANG \cite{bjorklund2016yang} abstract models. 
 
 In this paper, we present the automation of L3VPN services in a service provider environment. With this purpose, a commercial SDN domain controller using RESTCONF NBI interfaces is tested. The controller implements a YANG network model named L3NM. This work validates two ways to use the model measuring the time consumed to create the service on real devices. 
 
@@ -64,7 +64,7 @@ IP networks usually follow a hierarchical model, mixing equipment from different
 
 \begin{figure}
 	\centering
-		\includegraphics[scale=0.8]{ifusion_multidomain_2.png}
+		\includegraphics[width=\linewidth]{ifusion_multidomain_2.png}
 	\caption{IP SDN Domain Controller deployment}
 	\label{FIG:1}
 \end{figure}
@@ -76,11 +76,11 @@ The NBI allows the programmatic configuration of all elements participating in a
 
 \section{LAYER 3 VPN PROVISIONING}
 
-The Layer 3 Virtual Private Network (VPN) service defined in RFC 4364 \cite{} provides a multipoint, routed service to the customer over an IP/MPLS core. The L3VPNs are widely used to deploy 4G/5G, fixed, and enterprise services, principally because, not only many traffic discrimination policies can be applied to transport but also because of several stitching methodologies can be applied to combine access and transport services. 
+The Layer 3 Virtual Private Network (VPN) service defined in RFC 4364 \cite{rosen2006rfc} provides a multipoint, routed service to the customer over an IP/MPLS core. The L3VPNs are widely used to deploy 4G/5G, fixed, and enterprise services, principally because, not only many traffic discrimination policies can be applied to transport but also because of several stitching methodologies can be applied to combine access and transport services. 
 
 \begin{figure}
 	\centering
-		\includegraphics[scale=0.8]{figure2png.png}
+		\includegraphics[scale=0.3]{figure2png.png}
 	\caption{Design Phase and implementation phases of a MPLS VPN Service}
 	\label{FIG:2}
 \end{figure}
@@ -95,7 +95,7 @@ These two phases can be executed in different timeframes. However, the set of re
 
 \subsection{Desing Phase: Layer 3 VPN Network API}
 
-L3NM \cite{} is a YANG data model to manage and control the VPN Service configuration based on the service provider requirements:
+L3NM \cite{Aguado:2019aa} is a YANG data model to manage and control the VPN Service configuration based on the service provider requirements:
 \begin{itemize}
     \item Create a VPN Service
     \item Provision VRF on the PE
@@ -144,7 +144,7 @@ We can now summarize then what should we require from a NETCONF/YANG southbound 
 	\label{FIG:3}
 \end{figure}
 
-One of the main technologies that may help vendors to address these concerns is the use of the YANG Schema-Mount standard (RFC8528). Thanks to this technology, different versions of the same namespace could be added to different nodes in the controller configuration and state trees. This means that if we create a list of implementation, we could “mount” as many variants as desired. The idea of using the YANG Schema-Mount was already introduced at the Broadband Forum (BBF) TR-413 specification for the Broadband Access Abstraction (BAA) layer. In that document, the BBF also suggest the use of the same technology to solve the implementation of multiple protocols southbound (CLI, SNMP, REST) and mapping them to a common YANG representation depicted in \ref{}.
+One of the main technologies that may help vendors to address these concerns is the use of the YANG Schema-Mount standard (RFC8528). Thanks to this technology, different versions of the same namespace could be added to different nodes in the controller configuration and state trees. This means that if we create a list of implementation, we could “mount” as many variants as desired. The idea of using the YANG Schema-Mount was already introduced at the Broadband Forum (BBF) TR-413 specification for the Broadband Access Abstraction (BAA) layer. In that document, the BBF also suggest the use of the same technology to solve the implementation of multiple protocols southbound (CLI, SNMP, REST) and mapping them to a common YANG representation depicted in \ref{FIG:3}.
 \section{Experimental Validation}
 The network set-up and the test done are explained in this section.
 
@@ -209,11 +209,8 @@ Firstly, this article provides an overview of the latest state-of-the-art standa
 \section*{Acknowledgment}
 This work was supported partially by the European Commission H2020-ICT-2016-2 METRO-HAUL project (G. A. 761727) and Spanish AURORAS (RTI2018-099178).
 
-\begin{thebibliography}{00}
-\bibitem{b1} D. Kreutz, et al., “Software-Defined Networking: A Comprehensive Survey”, Proc. of the IEEE, Vol. 103, Issue 1, pp. 14- 76, January 2015.
-\bibitem{b2} L.M. Contreras, et al, “iFUSION: Standards-based SDN Architecture for Carrier Transport Network”, in Proc. of the IEEE CSCN, October 2019.
-\bibitem{b3} Aguado, a., et al (2020). draft-ietf-opsawg-l3sm-l3nm-01 -A Layer 3 VPN Network YANG Model. [online] Tools.ietf.org. Available at: https://tools.ietf.org/html/draft-ietf-opsawg-l3sm-l3nm-01 [Accessed 2 Jan. 2020].
-\bibitem{b4} Gonzalez de Dios, O., et al (2020). draft-ogondio-opsawg-uni-topology-00 - A YANG Model for User-Network Interface (UNI) Topologies. [online] Tools.ietf.org. Available at: https://tools.ietf.org/html/draft-ogondio-opsawg-uni-topology-00 [Accessed 2 Jan. 2020]
-\end{thebibliography}
+\bibliographystyle{ieeetr}
+% Loading bibliography database
+\bibliography{bibliography}
 
 \end{document}
