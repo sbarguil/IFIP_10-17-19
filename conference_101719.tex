@@ -2,14 +2,14 @@
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
+\usepackage[letterpaper, left=0.68in, right=0.68in, bottom=1.049in, top=0.75in]{geometry}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
 \usepackage{graphicx}
+\usepackage{cleveref}
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{siunitx}
-\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
 \title{Experimental validation of L3 VPN Network Model for improving VPN service design and provisioning}
@@ -50,7 +50,7 @@ Software-Defined Networking (SDN) originally \cite{brief2014openflow,gude2008nox
 
 The use of the SDN principles is aimed to simplify the network operation and to allow a fast reaction and adaptability to network changes motivated by traffic variability or simply because of service configuration. Besides network element control functions, SDN is also considered as an entity to provide support for management functions, such as a collection of real-time information that could permit the automatic configuration creation and activation in network elements, as triggered by the Operational Support Systems (OSS). Day to day network operation for a service provider involves a set of complex and technologically specific tasks. Some of these include periodic operations as capacity planning, traffic forecast analysis, network convergence optimization, new devices installation, or routine tasks like troubleshooting, patching, support in maintenance windows, or service provisioning. Commonly, the first set of tasks requires a high specialization and in-depth technological knowledge. However, the second set is mainly repetitive. 
 
-Since years ago, the usage of scripts to automate network tasks has become common. The usage of those scripts combined with some automation frameworks such as Ansible \cite{libes1995exploring} or libraries like Expect \cite{hochstein2017ansible} or Paramiko \cite{zadka2019paramiko} are the higest level of automation found in service providers. In paralel some DevOps teams have been created to reduce the volume of manual task. However, some studies have revealed that even if the tools used between Service Providers are the same and the set of services configured are the same (Virtual Leased Lines (VLL), L2VPNs and L3VPNs), there is not a common way to do it. In that sense, due to the high level of customization, automation has implementations not easy to replicate between companies or even teams in the same company. To solve this problem, several YANG models have been released to support the service provisioning based on NETCONF/RESTCONF \cite{enns2011network,bierman2017RESTCONF} interfaces and YANG \cite{bjorklund2016yang} abstract models. 
+Since years ago, the usage of scripts to automate network tasks has become common. The usage of those scripts combined with some automation frameworks such as Ansible \cite{libes1995exploring} or libraries like Expect \cite{hochstein2017ansible} or Paramiko \cite{zadka2019paramiko} are the highest level of automation found in service providers. In paralel some DevOps teams have been created to reduce the volume of manual task. However, some studies have revealed that even if the tools used between Service Providers are the same and the set of services configured are the same (Virtual Leased Lines (VLL), L2VPNs and L3VPNs), there is not a common way to do it. In that sense, due to the high level of customization, automation has implementations not easy to replicate between companies or even teams in the same company. To solve this problem, several YANG models have been released to support the service provisioning based on NETCONF/RESTCONF \cite{enns2011network,bierman2017RESTCONF} interfaces and YANG \cite{bjorklund2016yang} abstract models. 
 
 In this paper, we present the automation of L3VPN services in a service provider environment. With this purpose, a commercial SDN domain controller using RESTCONF NBI interfaces is tested. The controller implements a YANG network model named L3NM. This work validates two ways to use the model measuring the time consumed to create the service on real devices. 
 
@@ -70,7 +70,7 @@ IP networks usually follow a hierarchical model, mixing equipment from different
 \end{figure}
 
 
-\ref{FIG:1} shows the role of IP SDN Controller (IPSDNc) in a typical service provider network. The solution focuses on a single, multi-vendor controller responsible for configuring the IP network elements. The Northbound Interface (NBI) of the controller is based on standard models defined in YANG. To access it, the protocol supported is RESTCONF with JSON encoding.
+\Cref{FIG:1} shows the role of IP SDN Controller (IPSDNc) in a typical service provider network. The solution focuses on a single, multi-vendor controller responsible for configuring the IP network elements. The Northbound Interface (NBI) of the controller is based on standard models defined in YANG. To access it, the protocol supported is RESTCONF with JSON encoding.
 
 The NBI allows the programmatic configuration of all elements participating in a service. Thus, the IPSDNc must handle the service creation requests delivered by the service orchestration layer and translate it to device-specific configuration. For this task, the target Southbound Interface (SBI) of the IPSDNc is to make a vendor-agnostic device configuration using the NETCONF protocol and a common data model. The set of device configuration data models for the IP segment is still under development, but a lot of YANG definitions have been made in Openconfig or IETF until now. 
 
@@ -85,10 +85,10 @@ The Layer 3 Virtual Private Network (VPN) service defined in RFC 4364 \cite{rose
 	\label{FIG:2}
 \end{figure}
 
-To improve the L3VPN lifecycle management in the service provider network, as depicted in \ref{FIG:2}. Two phases need to be analyzed:
+To improve the L3VPN lifecycle management in the service provider network, as depicted in \cref{FIG:2}. Two phases need to be analyzed:
 \begin{itemize}
-    \item \textbr{Design phase}: Some service models have been defined and standardized until now. These works include generic purpose modeling languages like TOSCA or YANG \cite{}.
-    \item \textbr{Operation phase}: Instantiate the Service requests on the devices and operate them in the live network. It implies the ability to reuse the same service models against devices from different vendors.
+    \item Design phase: Some service models have been defined and standardized until now. These works include generic purpose modeling languages like TOSCA or YANG.
+    \item Operation phase: Instantiate the Service requests on the devices and operate them in the live network. It implies the ability to reuse the same service models against devices from different vendors.
 \end{itemize}
 
 These two phases can be executed in different timeframes. However, the set of requirements and parameters defined in the design limits the degree of automation provided during the implementation phase. 
@@ -139,12 +139,12 @@ We can now summarize then what should we require from a NETCONF/YANG southbound 
 
 \begin{figure}
 	\centering
-		\includegraphics[scale=0.8]{figure3.png}
+		\includegraphics[scale=0.9]{figure3.png}
 	\caption{Schema mount in RFC8528 used to map two implementations of openconfig-interfaces as SBI}
 	\label{FIG:3}
 \end{figure}
 
-One of the main technologies that may help vendors to address these concerns is the use of the YANG Schema-Mount standard (RFC8528). Thanks to this technology, different versions of the same namespace could be added to different nodes in the controller configuration and state trees. This means that if we create a list of implementation, we could “mount” as many variants as desired. The idea of using the YANG Schema-Mount was already introduced at the Broadband Forum (BBF) TR-413 specification for the Broadband Access Abstraction (BAA) layer. In that document, the BBF also suggest the use of the same technology to solve the implementation of multiple protocols southbound (CLI, SNMP, REST) and mapping them to a common YANG representation depicted in \ref{FIG:3}.
+One of the main technologies that may help vendors to address these concerns is the use of the YANG Schema-Mount standard (RFC8528). Thanks to this technology, different versions of the same namespace could be added to different nodes in the controller configuration and state trees. This means that if we create a list of implementation, we could “mount” as many variants as desired. The idea of using the YANG Schema-Mount was already introduced at the Broadband Forum (BBF) TR-413 specification for the Broadband Access Abstraction (BAA) layer. In that document, the BBF also suggest the use of the same technology to solve the implementation of multiple protocols southbound (CLI, SNMP, REST) and mapping them to a common YANG representation depicted in \cref{FIG:3}.
 \section{Experimental Validation}
 The network set-up and the test done are explained in this section.
 
@@ -153,18 +153,7 @@ For our experiments, we have chosen the OpenConfig data models for Cisco IOS-XR 
 
 \subsection{L3VPN Provisioning Workflow}
 
-The L3NM uses the YANG Modeling Language to technologically describe an L3VPN service. Thus, two main containers were defined, one for sites and one for the VPN-services. Each of these containers includes a list to create a set of sites and services, respectively. Each item (site or service) is uniquely identified in the list by their id, as follows:
-
-module: ietf-l3vpn-ntw
-+--rw l3vpn-ntw
-  +--rw sites
-   +--rw site* [id]
-    +--rw site-network-accesses
-       +--rw site network-access* [id]
-   +--rw vpn-services
-       +--rw vpn-service* [vpn-id]
-+--rw vpn-nodes
-    +--rw vpn-node* [ne-id]
+The L3NM uses the YANG Modeling Language to technologically describe an L3VPN service. Thus, two main containers were defined, one for sites and one for the VPN-services. Each of these containers includes a list to create a set of sites and services, respectively. Each item (site or service) is uniquely identified in the list by their id.
 
 The segmentation between site and services in the design allows the re-utilization of sites between several services and introduces several degrees of flexibility to request the service creation. One of those is the possibility to make creation requests during different timeframes. For example, an initial time can be used to provision the sites and make it available for the controller, and a second one to create the service itself.
 
@@ -181,30 +170,30 @@ To evaluate the YANG model defined for the L3VPN and how its design can impact t
 
 \begin{figure}
 	\centering
-		\includegraphics[width=\linewidth]{figure4.png}
+		\includegraphics[scale=1]{figure4.png}
 	\caption{Calls and numbers of parameters used in each test}
 	\label{FIG:4}
 \end{figure}
 
-Based on this, two workflows to request the VPN service to the network controller were defined. The workflows differ on N the number of calls done to create the service but globally the total number of parameters is identical, as detailed in \ref{FIG:4}.
+Based on this, two workflows to request the VPN service to the network controller were defined. The workflows differ on N the number of calls done to create the service but globally the total number of parameters is identical, as detailed in \cref{FIG:4}.
 
-Each workflow follows the next steps:  The creation request is sent to the IPSDNc using RESTCONF/YANG. IPSDNc computes the call and, if the request is valid, the controller returns with “201 CREATED”. The instantiation of the service on the device is done only when the call related to the VPN-Network-Access is processed. All the other operations are executed at the controller level, but not generate changes on the network. 
+Each workflow follows the next steps:  The creation request is sent to the IPSDNc using RESTCONF/YANG. IPSDNc computes the call and, if the request is valid, the controller returns with “201 CREATED”. The instantiation of the service on the device is done only when the call related to the VPN-Network-Access is processed. All the ot her operations are executed at the controller level, but not generate changes on the network. 
 
 \begin{figure}
 	\centering
-		\includegraphics[width=\linewidth]{figure6.png}
+		\includegraphics[scale=0.9]{fig1_architecture.png}
 	\caption{Performance results obtained during the testing}
 	\label{FIG:5}
 \end{figure}
 
 \section{Results}
-The total time consumed by the IPSDN controller to create and delete a VPN service form the network was measured. The mean (m) values and the standard deviation is computed in the for the 100 experiments. The main difference was found during the creation process. During creation, each additional call introduces a delay of $0,82$ seconds per additional call. This number seems low, however a change in the model structure, for example, avoid the cross-references between the containers of sites and VPN services, can allow a single call creation process. This potentially will reduce the creation time, a bit more. This kind of behavior can be treated as a design rule to make the model implementation efficient. 
+The total time consumed by the IPSDN controller to create and delete a VPN service form the network was measured. The mean $u$ values and the standard deviation $d$ is computed in the for the 100 experiments as depicted in \cref{FIG:5}. The main difference was found during the creation process. During creation, each additional call introduces a delay of $0,82$ seconds per additional call. This number seems low, however a change in the model structure, for example, avoid the cross-references between the containers of sites and VPN services, can allow a single call creation process. This potentially will reduce the creation time, a bit more. This kind of behavior can be treated as a design rule to make the model implementation efficient. 
 
 \section{CONCLUSIONS}
 
 Telecommunication providers are forced to continuously evolve their networks to provide a better service for their customers. Thus, Network automation initiatives are highly necessary.  The implementation of these initiatives requires their adaptability and support of brownfield scenarios in operating networks. This support must include not only the configuration of the devices and all the possible services provisioned in the day-to-day operations across the service provider networks. 
 
-Firstly, this article provides an overview of the latest state-of-the-art standardization efforts of the L3 VPN life cycle management. Secondly, the work implements for the first the very first time the L3NM. Two workflows were used to request the service using the same network model. The time consumed using each workflow to implement the service on the device were measured and compared. The work demonstrates that YANG design rules can directly affect the time consumed to create services and explains how device models implementations can limit the deployment of common interfaces
+Firstly, this article provides an overview of the latest state-of-the-art standardization efforts of the L3 VPN life cycle management. Secondly, the work implements for the very first time the L3NM. Two workflows were used to request the service using the same network model. The time consumed using each workflow to implement the service on the device were measured and compared. The work demonstrates that YANG design rules can directly affect the time consumed to create services and explains how device models implementations can limit the deployment of common interfaces
 
 \section*{Acknowledgment}
 This work was supported partially by the European Commission H2020-ICT-2016-2 METRO-HAUL project (G. A. 761727) and Spanish AURORAS (RTI2018-099178).
