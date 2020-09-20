@@ -50,9 +50,13 @@ Software-Defined Networking (SDN) originally \cite{brief2014openflow,gude2008nox
 
 The use of the SDN principles is aimed to simplify the network operation and to allow a fast reaction and adaptability to network changes motivated by traffic variability or simply because of service configuration. Besides network element control functions, SDN is also considered as an entity to provide support for management functions, such as a collection of real-time information that could permit the automatic configuration creation and activation in network elements, as triggered by the Operational Support Systems (OSS). Day to day network operation for a service provider involves a set of complex and technologically specific tasks. Some of these include periodic operations as capacity planning, traffic forecast analysis, network convergence optimization, new devices installation, or routine tasks like troubleshooting, patching, support in maintenance windows, or service provisioning. Commonly, the first set of tasks requires a high specialization and in-depth technological knowledge. However, the second set is mainly repetitive. 
 
-Since years ago, the usage of scripts to automate network tasks has become common. The usage of those scripts combined with some automation frameworks such as Ansible \cite{libes1995exploring} or libraries like Expect \cite{hochstein2017ansible} or Paramiko \cite{zadka2019paramiko} are the highest level of automation found in service providers. In paralel some DevOps teams have been created to reduce the volume of manual task. However, some studies have revealed that even if the tools used between Service Providers are the same and the set of services configured are the same (Virtual Leased Lines (VLL), L2VPNs and L3VPNs), there is not a common way to do it. In that sense, due to the high level of customization, automation has implementations not easy to replicate between companies or even teams in the same company. To solve this problem, several YANG models have been released to support the service provisioning based on NETCONF/RESTCONF \cite{enns2011network,bierman2017RESTCONF} interfaces and YANG \cite{bjorklund2016yang} abstract models. 
+Since years ago, the usage of scripts to automate network tasks has become common. The usage of those scripts combined with some automation frameworks such as Ansible \cite{libes1995exploring} or libraries like Expect \cite{hochstein2017ansible} or Paramiko \cite{zadka2019paramiko} are the highest level of automation found in service providers. Lately, similar works has been done using more modern tools such as NETCONF/RESTCONF \cite{enns2011network,bierman2017RESTCONF,vilalta2018experimental} interfaces and YANG \cite{bjorklund2016yang} abstract models. Some of the works available are focus, on solution the  Layer-2 services (L2VPNs) provision \cite{ventre2017sdn,noghani2017automating,wuframework} and/or Layer-3 Services (L3VPNs), including some new features such as the 5G deployment \cite{rokui2020standards}.
 
-In this paper, we present the automation of MPLS L3 VPN services in a carrier ecosystem. A commercial SDN domain controller using RESTCONF NBI interfaces is tested. The controller implements a YANG network model named L3NM (A Layer 3 VPN Network YANG Model).  As the main result of this work, two ways to request the service creation to the controller, and after deploying it in the network are compared.
+%%In paralel some DevOps teams have been created to reduce the volume of manual task. However, some studies have revealed that even if the tools used between Service Providers are the same and the set of services configured are the same Virtual Leased Lines (VLL), Layer-2 services (L2VPNs) and Layer-3 Services (L3VPNs), there is not a common way to do it. In that sense, due to the high level of customization, automation has implementations not easy to replicate between companies or even teams in the same company. 
+
+%%To solve this problem, several YANG models have been released to support the service provisioning based on NETCONF/RESTCONF \cite{enns2011network,bierman2017RESTCONF} interfaces and YANG \cite{bjorklund2016yang} abstract models. 
+
+In this paper, we present the intent-based configuration of the MPLS L3 VPN services in a carrier grade ecosystem. A commercial SDN domain controller using RESTCONF NBI (Northbound Interface) is tested. The controller implements a YANG network model named L3NM (A Layer 3 VPN Network YANG Model) used to abstract the complexity of the network configuration.  As the main result of this work, the time consumed by two ways to use the same YANG data model to request and delete the service at controller and network level were compared.
 
 This paper has the following structure: \Cref{sect:arqu} explains the functional architecture for an IP SDN solution. \Cref{sect:l3vpn} explains the Network Service Models used for the L3VPN definition. \Cref{sect:exp} explains the experimental validation and the results obtained. Finally, \cref{sect:conclu} concludes this paper. 
 
@@ -69,7 +73,7 @@ IP networks usually follow a hierarchical model, mixing equipment from different
 \end{figure}
 
 
-\Cref{FIG:1} shows the role of IP SDN Controller (IPSDNc) in a typical service provider network. The solution focuses on a single, multi-vendor controller responsible for configuring the IP network elements. The Northbound Interface (NBI) of the controller is based on standard models defined in YANG. To access it, the protocol supported is RESTCONF with JSON encoding.
+\Cref{FIG:1} shows the role of IP SDN Controller (IPSDNc) under the iFusion network architecture defined in \cite{contreras2019ifusion} by Telefonica. This architecture solution focuses on a single, multi-vendor controller responsible for configuring the IP network elements. The Northbound Interface (NBI) of the controller is based on standard models defined in YANG. To access it, the protocol supported is RESTCONF with JSON encoding.
 
 The NBI allows the programmatic configuration of all elements participating in a service. Thus, the IPSDNc must handle the service creation requests delivered by the service orchestration layer and translate it to device-specific configuration. For this task, the target Southbound Interface (SBI) of the IPSDNc is to make a vendor-agnostic device configuration using the NETCONF protocol and a common data model. The set of device configuration data models for the IP segment is still under development, but a lot of YANG definitions have been made in Openconfig or IETF until now. 
 
@@ -183,14 +187,14 @@ Each workflow follows the next steps:  The creation request is sent to the IPSDN
 
 \begin{figure}
 	\centering
-		\includegraphics[scale=0.9]{figure5.png}
+		\includegraphics[width=\linewidth]{figure51.png}
 	\caption{Performance results obtained during the testing}
 	\label{FIG:5}
 \end{figure}
 
 \begin{figure}
 	\centering
-		\includegraphics[scale=0.9]{figure61.png}
+		\includegraphics[width=\linewidth]{figure61.png}
 	\caption{Performance results obtained during the testing}
 	\label{FIG:5}
 \end{figure}
