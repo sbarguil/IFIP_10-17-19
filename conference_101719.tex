@@ -159,16 +159,16 @@ For our experiments, we have chosen the OpenConfig data models for Cisco IOS-XR 
 
 \subsection{L3VPN Provisioning Workflow}
 
-The L3NM uses the YANG Modeling Language to technologically describe an L3VPN service. Thus, two main containers were defined, one for sites and one for the VPN-services. Each of these containers includes a list to create a set of sites and services, respectively. Each item (site or service) is uniquely identified in the list by their id.
+The L3NM uses the YANG Modeling Language to describe an MPLS L3VPN service. The model defines two main containers, one for sites and one for the VPN-services. Each of these containers includes a list to create a set of sites and services, respectively. Each item (site or service) is uniquely identified in the list by their id.
 
-The segmentation between site and services in the design allows the re-utilization of sites between several services and introduces several degrees of flexibility to request the service creation. One of those is the possibility to make creation requests during different timeframes. For example, an initial time can be used to provision the sites and make it available for the controller, and a second one to create the service itself.
+The segmentation between site and services in the model design allows the re-utilization of sites between several services and allows several degrees of flexibility to request services based on intents.  For example, an intent can be used to provision the sites and make the PE-locations available for the controller, and a second intent to create the VPN service itself.
 
 \subsection{Experimentations}
 To evaluate the YANG model defined for the L3VPN and how its design can impact the service instantiation, the following tests were done:
 \begin{enumerate}
-    \item Define the minimum set of calls to request the service: Based on the model structure, the minimum number of calls required to complete the VPN onboarding process is three (3), due to the existing cross-references between sites and VPN-service.
-    \item Compare the minimum set of calls against the number of calls suggested by the model creators: According to the model specification five (5) request is the desired number of requests. 
-    \item Create a hundred (100) services using both methods and capture the time consumed by the controller to process each service request, measured as:
+    \item Define the minimum set of intents to request the service: Based on the YANG model structure, the minimum number of intents required to complete the VPN onboarding process is three (3).
+    \item Compare the minimum set of Intents against the number of calls suggested by the model creators: The model specification suggest five (5) intents as the optimal number of requests. 
+    \item Create a hundred (100) services/tests using both provisioning methodologies and capture the time consumed by the controller to process each service request, measured as:
     \begin{equation}
          \si{\textrm{Net time}= \textrm{Creation} + \textrm{Deletion}\qquad \second}
     \end{equation}
@@ -176,14 +176,14 @@ To evaluate the YANG model defined for the L3VPN and how its design can impact t
 
 \begin{figure}
 	\centering
-		\includegraphics[scale=1]{figure41.png}
-	\caption{Calls and numbers of parameters used in each test}
+		\includegraphics[width=\linewidth]{figure41.png}
+	\caption{Intents and numbers of parameters used in each test}
 	\label{FIG:4}
 \end{figure}
 
 Based on this, two workflows to request the VPN service to the network controller were defined. The workflows differ on N the number of calls done to create the service but globally the total number of parameters is identical, as detailed in \cref{FIG:4}.
 
-Each workflow follows the next steps:  The creation request is sent to the IPSDNc using RESTCONF/YANG. IPSDNc computes the call and, if the request is valid, the controller returns with “201 CREATED”. The instantiation of the service on the device is done only when the call related to the VPN-Network-Access is processed. All the ot her operations are executed at the controller level, but not generate changes on the network. 
+Each workflow follows the next steps:  ALl the creation intents are sent to the IPSDNc using RESTCONF/YANG. IPSDNc computes the call and, if the request is valid, the controller returns the creation confirmation code. The network controller does the service deployment on the network only when the intent related to the VPN-Network-Access is received. The other intents create resources at the controller level only.
 
 \begin{figure}
 	\centering
@@ -196,7 +196,7 @@ Each workflow follows the next steps:  The creation request is sent to the IPSDN
 	\centering
 		\includegraphics[width=\linewidth]{figure62.png}
 	\caption{Performance results obtained during the testing}
-	\label{FIG:5}
+	\label{FIG:6}
 \end{figure}
 
 \section{RESULTS}
