@@ -50,7 +50,7 @@ Software-Defined Networking (SDN) originally \cite{brief2014openflow,gude2008nox
 
 The use of the SDN principles is aimed to simplify the network operation and to allow a fast reaction and adaptability to network changes motivated by traffic variability or simply because of service configuration. Besides network element control functions, SDN is also considered as an entity to provide support for management functions, such as a collection of real-time information that could permit the automatic configuration creation and activation in network elements, as triggered by the Operational Support Systems (OSS). Day to day network operation for a service provider involves a set of complex and technologically specific tasks. Some of these include periodic operations as capacity planning, traffic forecast analysis, network convergence optimization, new devices installation, or routine tasks like troubleshooting, patching, support in maintenance windows, or service provisioning. Commonly, the first set of tasks requires a high specialization and in-depth technological knowledge. However, the second set is mainly repetitive. 
 
-Since years ago, the usage of scripts to automate network tasks has become common. The usage of those scripts combined with some automation frameworks such as Ansible \cite{libes1995exploring} or libraries like Expect \cite{hochstein2017ansible} or Paramiko \cite{zadka2019paramiko} are the highest level of automation found in service providers. Lately, similar works has been done using more modern tools such as NETCONF/RESTCONF \cite{enns2011network,bierman2017RESTCONF,vilalta2018experimental} interfaces and YANG \cite{bjorklund2016yang} abstract models. Some of the works available are focus, on solution the  Layer-2 services (L2VPNs) provision \cite{ventre2017sdn,noghani2017automating,wuframework} and/or Layer-3 Services (L3VPNs), including some new features such as the 5G deployment \cite{rokui2020standards}.
+Since years ago, the usage of scripts to automate network tasks has become common. The usage of those scripts combined with some automation frameworks such as Ansible \cite{libes1995exploring} or libraries like Expect \cite{hochstein2017ansible} or Paramiko \cite{zadka2019paramiko} are the highest level of automation found in service providers. Lately, similar works has been done using more modern tools such as NETCONF/RESTCONF \cite{enns2011network,bierman2017RESTCONF,vilalta2018experimental} interfaces and YANG \cite{bjorklund2016yang} abstract models. Some of the works available are focus, on solution the  Layer-2 services (L2VPNs) provision \cite{ventre2017sdn,noghani2017automating,wuframework} and/or Layer-3 Services (L3VPNs), including some new features such as the network slicing for 5G deployment \cite{rokui2020standards}.
 
 %%In paralel some DevOps teams have been created to reduce the volume of manual task. However, some studies have revealed that even if the tools used between Service Providers are the same and the set of services configured are the same Virtual Leased Lines (VLL), Layer-2 services (L2VPNs) and Layer-3 Services (L3VPNs), there is not a common way to do it. In that sense, due to the high level of customization, automation has implementations not easy to replicate between companies or even teams in the same company. 
 
@@ -73,7 +73,7 @@ IP networks usually follow a hierarchical model, mixing equipment from different
 \end{figure}
 
 
-\Cref{FIG:1} shows the role of IP SDN Controller (IPSDNc) under the iFusion network architecture defined in \cite{contreras2019ifusion} by Telefonica. This architecture solution focuses on a single, multi-vendor controller responsible for configuring the IP network elements. The Northbound Interface (NBI) of the controller is based on standard models defined in YANG. To access it, the protocol supported is RESTCONF with JSON encoding.
+\Cref{FIG:1} shows the role of IP SDN Controller (IPSDNc) under the iFusion network architecture defined by Telefonica \cite{contreras2019ifusion}. This architecture solution focuses on a single, multi-vendor controller responsible for configuring all the IP network elements. The Northbound Interface (NBI) of the controller is based on standard models defined in YANG. To access it, the protocol supported is RESTCONF with JSON encoding.
 
 The NBI allows the programmatic configuration of all elements participating in a service. Thus, the IPSDNc must handle the service creation requests delivered by the service orchestration layer and translate it to device-specific configuration. For this task, the target Southbound Interface (SBI) of the IPSDNc is to make a vendor-agnostic device configuration using the NETCONF protocol and a common data model. The set of device configuration data models for the IP segment is still under development, but a lot of YANG definitions have been made in Openconfig or IETF until now. 
 
@@ -155,7 +155,15 @@ One of the main technologies that may help vendors to address these concerns is 
 The network set-up and the test done are explained in this section.
 
 \subsection{Network Set-up}
-For our experiments, we have chosen the OpenConfig data models for Cisco IOS-XR and the Cisco Network Services Orchestrator (NSO) as the IP Controller. The Cisco NSO controller implements the YANG Schema-Mount standard (RFC8528) southbound and the L3NM as the service model in the NBI.
+
+For our experiments, we have chosen the data models for Cisco IOS-XR configuration and the Cisco Network Services Orchestrator (NSO) as the IP Controller. The Cisco NSO controller implements the L3NM as the service model in the NBI.
+
+\begin{figure}
+	\centering
+		\includegraphics[width=\linewidth]{figure7.png}
+	\caption{Network Set-up and Experimentation}
+	\label{FIG:4}
+\end{figure}
 
 \subsection{L3VPN Provisioning Workflow}
 
@@ -212,7 +220,7 @@ Telecommunication providers are forced to continuously evolve their networks to 
 Firstly, this article provides an overview of the latest state-of-the-art standardization efforts of the L3 VPN life cycle management. Secondly, the work implements for the very first time the L3NM. Two workflows were used to request the service using the same network model. The time consumed using each workflow to implement the service on the device were measured and compared. The work demonstrates that YANG design rules can directly affect the time consumed to create services and explains how device models implementations can limit the deployment of common interfaces
 
 \section*{Acknowledgment}
-This work was supported partially by the European Commission H2020-ICT-2016-2 METRO-HAUL project (G. A. 761727) and Spanish AURORAS (RTI2018-099178).
+This work was supported partially by the European Commission H2020-ICT-2016-2 METRO-HAUL project (G. A. 761727), H2020-ICT-2018-2020 5G-VINNIN (G. A. 815279) and Spanish AURORAS (RTI2018-099178).
 
 \bibliographystyle{ieeetr}
 % Loading bibliography database
