@@ -148,7 +148,9 @@ We can now summarize then what should we require from a NETCONF/YANG southbound 
 	\label{FIG:3}
 \end{figure}
 
-One of the main technologies that may help vendors to address these concerns is the use of the YANG Schema-Mount standard (RFC8528). Thanks to this technology, different versions of the same namespace could be added to different nodes in the controller configuration and state trees. This means that if we create a list of implementation, we could “mount” as many variants as desired. The idea of using the YANG Schema-Mount was already introduced at the Broadband Forum (BBF) TR-413 specification for the Broadband Access Abstraction (BAA) layer. In that document, the BBF also suggest the use of the same technology to solve the implementation of multiple protocols southbound (CLI, SNMP, REST) and mapping them to a common YANG representation depicted in \cref{FIG:3}.
+One of the main technologies that may help vendors to address these concerns is the use of the YANG Schema-Mount standard (RFC8528). Thanks to this technology, different versions of the same namespace could be added to different nodes in the controller configuration and state trees. This means that if we create a list of implementation, we could “mount” as many variants as desired depicted in \cref{FIG:3}.
+
+%The idea of using the YANG Schema-Mount was already introduced at the Broadband Forum (BBF) TR-413 specification for the Broadband Access Abstraction (BAA) layer. In that document, the BBF also suggest the use of the same technology to solve the implementation of multiple protocols southbound (CLI, SNMP, REST) and mapping them to a common YANG representation .
 
 \section{EXPERIMENTAL VALIDATION}
 \label{sect:exp}
@@ -156,20 +158,20 @@ The network set-up and the test done are explained in this section.
 
 \subsection{Network Set-up}
 
-For our experiments, we have chosen the data models for Cisco IOS-XR configuration and the Cisco Network Services Orchestrator (NSO) as the IP Controller. The Cisco NSO controller implements the L3NM as the service model in the NBI.
+For our experiments, we have chosen the data models for Cisco IOS-XR configuration and the Cisco Network Services Orchestrator (NSO) as the IP Controller. The Cisco NSO controller implements the L3NM as the service model in the NBI as depicted in \cref{FIG:7}.
 
 \begin{figure}
 	\centering
 		\includegraphics[width=\linewidth]{figure71.png}
 	\caption{Network Set-up and Experimentation}
-	\label{FIG:4}
+	\label{FIG:7}
 \end{figure}
 
 \subsection{L3VPN Provisioning Workflow}
 
 The L3NM uses the YANG Modeling Language to describe an MPLS L3VPN service. The model defines two main containers, one for sites and one for the VPN-services. Each of these containers includes a list to create a set of sites and services, respectively. Each item (site or service) is uniquely identified in the list by their id.
 
-The segmentation between site and services in the model design allows the re-utilization of sites between several services and allows several degrees of flexibility to request services based on intents.  For example, an intent can be used to provision the sites and make the PE-locations available for the controller, and a second intent to create the VPN service itself.
+%The segmentation between site and services in the model design allows the re-utilization of sites between several services and allows several degrees of flexibility to request services based on intents.  For example, an intent can be used to provision the sites and make the PE-locations available for the controller, and a second intent to create the VPN service itself.
 
 \subsection{Experimentations}
 To evaluate the YANG model defined for the L3VPN and how its design can impact the service instantiation, the following tests were done:
